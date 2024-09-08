@@ -6,10 +6,10 @@ local_imgs = local.joinpath('imgs')
 local_cascade = local.joinpath('cascade')
 
 #carrega a imagem:
-imagem = cv2.imread(local_imgs.joinpath('people1.jpg'))
+imagem = cv2.imread(local_imgs.joinpath('people2.jpg'))
 
 print(f'tamanho original: {imagem.shape}')
-imagem = cv2.resize(imagem,(800,600))
+#imagem = cv2.resize(imagem,(800,600))
 print(f'tamanho reduzido: {imagem.shape}')
 
 #converte a imagem para o cinza pq tem menos pixels (mais rapido de fazer o processamento )
@@ -26,7 +26,15 @@ def abrir_imagem(img):
 
 #detecção de faces:
 detector_facial = cv2.CascadeClassifier(local_cascade.joinpath('haarcascade_frontalface_default.xml'))
-deteccoes = detector_facial.detectMultiScale(imagem_cinza)
+
+# scaleFactor= (quanto mais proximo esta a face menor a escala, visse e versa)
+deteccoes = detector_facial.detectMultiScale(
+    imagem_cinza,
+    scaleFactor=1.2,
+    minNeighbors=3,
+    minSize=(32,32),
+    maxSize=(100,100)
+)
 
 # (x,y,largura,altura)
 print(deteccoes)
@@ -34,6 +42,6 @@ print(f'quantidade de faces encontradas: {len(deteccoes)}')
 
 #desenhando um retangulo ao redor da face
 for x,y,w,h in deteccoes:
-    cv2.rectangle(imagem, (x,y), (x + w,y +h), (0,255,255), 5)
+    cv2.rectangle(imagem, (x,y), (x + w,y +h), (0,255,255), 2)
 
 abrir_imagem(imagem)
